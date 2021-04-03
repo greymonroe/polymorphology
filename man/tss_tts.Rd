@@ -17,7 +17,7 @@ tss_tts(
 \arguments{
 \item{gff}{directory and file name of reference gff OR data.table object of gff data}
 
-\item{vcf}{directory and file name vcf data OR data.table object of vcf data (from package vcfR, and only the @fix data)}
+\item{vcf}{directory and file name vcf data OR data.table object of variant data (data.table with CHROM, POS, REF, and ALT columns)}
 
 \item{loc}{"tss" or "tts", default is "tss"}
 
