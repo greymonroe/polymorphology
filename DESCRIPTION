@@ -1,0 +1,17 @@
+Package: PolyMorphology
+Title: Uses Genome Annotations and Variant Data to Analyse Genome-wide Patterns of Polymoprhisms Across Gene Features 
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Grey",
+           family = "Monroe",
+           role = c("aut", "cre"),
+           email = "greymonroe@gmail.com",
+           comment = c(ORCID = "0000-0002-4025-5572"))
+Description: For research analyzing how rates of poylmorphism vary between different regions of the genome. For example, how to rates of polymoprhim relate to transcription start and termination sites and coding regions. Contains wrapper functions to simplify analyses of population genetic statistics like Tajima's D within and around features as well. Part of a larger project investigating the role of mutation bias in shaping the "morphology"of genetic polymorphisms. 
+License: `use_mit_license()`, `use_gpl3_license()` or friends to
+    pick a license
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: data.table, ggplot2, vcfR
