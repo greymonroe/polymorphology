@@ -24,7 +24,7 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
 
   if (is.character(vcf)){
     vcf<-read.vcfR(vcf)
-    vcf<-vcf@fix
+    vcf<-data.table(vcf@fix)
   }
 
 
