@@ -14,7 +14,7 @@
 #' @import vcfR
 #' @export
 
-tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", loc="tss", feature="gene"){
+tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature="gene"){
 
   if (is.character(gff)){
     gff<-fread(gff)
@@ -39,8 +39,8 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", loc="ts
   var_split[]<-lapply(var_split, function(x) unique(x$POS))
 
 
-  if(loc=="tss"){
-    positions<-unlist(apply(genes, 1, function(x){
+ # extract positions of variants relative to transcription start sites (tss)
+    tss<-unlist(apply(genes, 1, function(x){
     if(x[7]=="-"){
       out<- c(-3000:3000)[rev((as.numeric(x[5])-3000):(as.numeric(x[5])+3000) %in% var_split[[x[1]]])]
     } else {
@@ -49,10 +49,9 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", loc="ts
     return(out)
   }
   ))
-  }
-
-  if(loc=="tts"){
-    positions<-unlist(apply(genes, 1, function(x){
+                      
+  # extract positions of variants relative to transcription termination sites (tts)
+    tts<-unlist(apply(genes, 1, function(x){
       if(x[7]=="-"){
         out<- c(-3000:3000)[rev((as.numeric(x[4])-3000):(as.numeric(x[4])+3000) %in% var_split[[x[1]]])]
       } else {
@@ -61,6 +60,9 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", loc="ts
       return(out)
     }
     ))
-  }
+ # merge into single data.table of tss and tts
+ positions<-data.table(pos=c(tss, tts), loc=c(rep("TSS", times=length(tss)), rep("TTS", times=length(tts))))
+  
 return(positions)
+                      
 }
