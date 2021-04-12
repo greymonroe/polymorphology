@@ -1,5 +1,4 @@
 # get TSS and TTS Tajima's D distributions
-# input:
 
 #' extract relative position of polymorphisms in relation to gene bodies
 #' @param gff directory and file name of reference gff OR data.table object of gff data
@@ -72,5 +71,5 @@ tss_tts.tajima<-function(gff, tajima, type="both", chrs="all", num="all", loc="t
     }
     )
   }
-  return(D)
+  return(rbindlist(D))
 }
