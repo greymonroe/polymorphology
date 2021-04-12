@@ -3,5 +3,7 @@
 export(tss_tts.feature)
 export(tss_tts.tajima)
 export(tss_tts.variants)
+export(tss_tts.variants.plot)
 import(data.table)
+import(ggplot2)
 import(vcfR)

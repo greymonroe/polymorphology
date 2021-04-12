@@ -10,7 +10,6 @@ tss_tts.variants(
   type = "both",
   chrs = "all",
   num = "all",
-  loc = "tss",
   feature = "gene"
 )
 }
@@ -25,9 +24,9 @@ tss_tts.variants(
 
 \item{num}{set number of genes, default is "all}
 
-\item{loc}{"tss" or "tts"}
-
 \item{feature}{name of the feature in the gff data that you want to look at, default is "gene"}
+
+\item{loc}{"tss" or "tts"}
 }
 \value{
 a vector of the relative position of polymorphsims in relation to feature
