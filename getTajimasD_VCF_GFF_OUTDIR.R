@@ -5,12 +5,7 @@ args = commandArgs(trailingOnly=TRUE)
 # and gff which is the gff file for example:
 # Rscript getTajimasD_for_gff.R TAIR10.gff 1001G.vcf.gz
 
+setwd(args[3])
 library(polymorphology)
 getTajimasD(vcf=args[1], gff=args[2])
-
-
-
-
-
-
 
