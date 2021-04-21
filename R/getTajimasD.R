@@ -13,7 +13,7 @@
 getTajimasD<-function(vcf, gff){
 
   #we then create a file to paste the output
-  system(paste0("touch tajimas",vcf,".gff"))
+  system(paste0("touch tajimas_",vcf,".txt"))
 
   gff<-read.table(gff)
 
@@ -27,9 +27,9 @@ for( i in 1:nrow(gff)){
   start<-gff$V2[i]
   stop<-gff$V3[i]
 
-  system(paste0("tabix -h ",vcf," ", chr,":",start,"-",stop," > ",vcf,"region.vcf"))
-  system(paste0("vcftools --vcf ",chrom,"region.vcf --out ",vcf," --TajimaD 100000000"))
-  system(paste0("tail -1 ",chrom,".Tajima.D >> tajimas",vcf,".gff"))
+  system(paste0("tabix -h ",vcf," ", chr,":",start,"-",stop," > ",vcf,"_tmp_region.vcf"))
+  system(paste0("vcftools --vcf ",vcf,"_tmp_region.vcf --out ",vcf," --TajimaD 100000000"))
+  system(paste0("tail -1 ",vcf,".Tajima.D >> tajimas_",vcf,".txt"))
 }
 
 }
