@@ -26,8 +26,6 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     vcf<-data.table(vcf@fix)
   }
 
-
-
   genes<-gff[type==feature]
   if (chrs!="all"){genes<-genes[chr %in% chrs]}
   if (num!="all"){genes<-genes[1:num]}
