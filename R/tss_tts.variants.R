@@ -7,7 +7,6 @@
 #' @param type "snp", "indel", or "both", default is "both"
 #' @param chrs selection specific chromosomes, default is "all"
 #' @param num set number of genes, default is "all
-#' @param loc "tss" or "tts"
 #' @param feature name of the feature in the gff data that you want to look at, default is "gene"
 #' @return a vector of the relative position of polymorphsims in relation to feature
 #' @import data.table
@@ -49,7 +48,7 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     return(out)
   }
   ))
-                      
+
   # extract positions of variants relative to transcription termination sites (tts)
     tts<-unlist(apply(genes, 1, function(x){
       if(x[7]=="-"){
@@ -62,7 +61,7 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     ))
  # merge into single data.table of tss and tts
  positions<-data.table(pos=c(tss, tts), loc=c(rep("TSS", times=length(tss)), rep("TTS", times=length(tts))))
-  
+
 return(positions)
-                      
+
 }
