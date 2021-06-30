@@ -9,7 +9,6 @@
 #' @import vcfR
 #' @export
 
-
 getTajimasD<-function(vcf, gff){
 
   #we then create a file to paste the output

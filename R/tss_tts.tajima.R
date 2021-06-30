@@ -12,7 +12,7 @@
 #' @import vcfR
 #' @export
 
-tss_tts.tajima<-function(gff, tajima, type="both", chrs="all", num="all", loc="tss", feature="gene"){
+tss_tts.tajima<-function(gff, tajima, chrs="all", num="all", loc="both", feature="gene"){
 
   if (is.character(gff)){
     gff<-fread(gff)
@@ -26,8 +26,8 @@ tss_tts.tajima<-function(gff, tajima, type="both", chrs="all", num="all", loc="t
   tajima_split<-split(tajima, by="CHROM")
 
   #get TSS snp coordinates
-  if(loc=="tss"){
-    D<-apply(genes[], 1, function(x){
+
+  tss<-rbindlist(apply(genes[], 1, function(x){
       if(x[7]=="-"){
         stop<-as.numeric(x[4])
         start<-as.numeric(x[5])
@@ -47,11 +47,11 @@ tss_tts.tajima<-function(gff, tajima, type="both", chrs="all", num="all", loc="t
       }
       return(data.table(pos, D=taj))
     }
-    )
-  }
+    ))
 
-  if(loc=="tts"){
-    D<-apply(genes[], 1, function(x){
+  tss$loc<-"TSS"
+
+    tts<-rbindlist(apply(genes[], 1, function(x){
       if(x[7]=="-"){
         stop<-as.numeric(x[4])
         start<-as.numeric(x[5])
@@ -69,7 +69,10 @@ tss_tts.tajima<-function(gff, tajima, type="both", chrs="all", num="all", loc="t
       }
       return(data.table(pos=pos, D=taj))
     }
-    )
-  }
-  return(rbindlist(D))
+    ))
+
+    tts$loc<-"TTS"
+
+  return(rbind(tss, tts))
+
 }
