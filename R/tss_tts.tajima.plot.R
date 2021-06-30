@@ -6,6 +6,7 @@
 #' @import data.table
 #' @import ggplot2
 #' @export
+
 tss_tts.tajima.plot<-function(tajima, window=300, color="green4"){
 
   tsstaj_means<-tajima[,.(D=mean(D, na.rm=T)), by=.(bins=as.numeric(cut(pos, 300)), loc)]
