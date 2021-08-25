@@ -37,15 +37,17 @@ tss_tts.tajima<-function(gff, tajima, chrs="all", num="all", loc="both", feature
         #nums<-((as.numeric(x[5])-3000):(as.numeric(x[5])+3000))[which(which)]
         pos<- (start-bins)
         taj<-tajima_split[[x[1]]][(BIN_START) %in% bins]$TajimaD
+        N_SNPS<-tajima_split[[x[1]]][(BIN_START) %in% bins]$N_SNPS
 
       } else {
         which<-((as.numeric(x[4])-3000):(as.numeric(x[4])+3000) %in% (tajima_split[[x[1]]]$BIN_START))
         nums<-c(as.numeric(x[4])-3000):(as.numeric(x[4])+3000)
         pos<- (-3000:3000)[which]
         taj<-tajima_split[[x[1]]][(BIN_START) %in% nums[which(which)]]$TajimaD
+        N_SNPS<-tajima_split[[x[1]]][(BIN_START) %in% nums[which(which)]]$N_SNPS
 
       }
-      return(data.table(pos, D=taj))
+      return(data.table(pos, D=taj,N_SNPS=N_SNPS))
     }
     ))
 
@@ -61,13 +63,16 @@ tss_tts.tajima<-function(gff, tajima, chrs="all", num="all", loc="both", feature
         #nums<-((as.numeric(x[5])-3000):(as.numeric(x[5])+3000))[which(which)]
         pos<- (stop-bins)
         taj<-tajima_split[[x[1]]][(BIN_START) %in% bins]$TajimaD
+        N_SNPS<-tajima_split[[x[1]]][(BIN_START) %in% bins]$N_SNPS
+
       } else {
         which<-((as.numeric(x[5])-3000):(as.numeric(x[5])+3000) %in% (tajima_split[[x[1]]]$BIN_START))
         nums<-c(as.numeric(x[5])-3000):(as.numeric(x[5])+3000)
         pos<- (-3000:3000)[which]
         taj<-tajima_split[[x[1]]][(BIN_START) %in% nums[which(which)]]$TajimaD
+        N_SNPS<-tajima_split[[x[1]]][(BIN_START) %in% nums[which(which)]]$N_SNPS
       }
-      return(data.table(pos=pos, D=taj))
+      return(data.table(pos=pos, D=taj, N_SNPS=N_SNPS))
     }
     ))
 

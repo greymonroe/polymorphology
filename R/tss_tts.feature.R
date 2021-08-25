@@ -29,14 +29,11 @@ tss_tts.feature<-function(gff, chrs="all", num="all", feature="gene", feature2="
   if (chrs!="all"){features<-features[chr %in% chrs]}
   if (num!="all"){features<-features[1:num]}
 
-  if(type=="snp"){var_split<-split(vcf[nchar(REF)==nchar(ALT)], by="CHROM")}
-  if(type=="indel"){var_split<-split(vcf[nchar(REF)!=nchar(ALT)], by="CHROM")}
   features_split<-split(features[], by="chr")
   features_split[]<-lapply(features_split, function(x) unique(unlist(apply(x, 1, function(y) y[4]:y[5]))))
 
 
-  if(loc=="tss"){
-    positions<-unlist(apply(genes, 1, function(x){
+    tss<-unlist(apply(genes, 1, function(x){
       if(x[7]=="-"){
         out<- c(-3000:3000)[rev((as.numeric(x[5])-3000):(as.numeric(x[5])+3000) %in% features_split[[x[1]]])]
       } else {
@@ -45,10 +42,10 @@ tss_tts.feature<-function(gff, chrs="all", num="all", feature="gene", feature2="
       return(out)
     }
     ))
-  }
 
-  if(loc=="tts"){
-    positions<-unlist(apply(genes, 1, function(x){
+
+
+    tts<-unlist(apply(genes, 1, function(x){
       if(x[7]=="-"){
         out<- c(-3000:3000)[rev((as.numeric(x[4])-3000):(as.numeric(x[4])+3000) %in% features_split[[x[1]]])]
       } else {
@@ -57,6 +54,7 @@ tss_tts.feature<-function(gff, chrs="all", num="all", feature="gene", feature2="
       return(out)
     }
     ))
-  }
+    positions<-data.table(pos=c(tss, tts), loc=c(rep("TSS", times=length(tss)), rep("TTS", times=length(tts))))
+
   return(positions)
 }
