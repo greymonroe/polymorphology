@@ -17,9 +17,7 @@ tss_tts.variants.plot<-function(positions, window=10, color="green4"){
     scale_x_continuous(name="Relative genomic positions")+
     geom_vline(xintercept=0, linetype="dashed", size=0.25)+
     scale_y_continuous(name="Variants")+
-    theme(strip.background = element_blank(),
-  strip.text.x = element_blank(),
-  panel.background = element_rect(colour = "black", size=0.5),
+    theme(panel.background = element_rect(colour = "black", size=0.5),
   axis.line.y = element_blank())
   return(plot)
 
