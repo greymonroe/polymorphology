@@ -21,7 +21,7 @@ tss_tts.tajima.plot<-function(tajima, window=10, color="green4", y="D"){
                                                                  col = color, size = 0.25) + facet_grid(~loc) +
     theme_classic(base_size = 6) + scale_x_continuous(name = "Relative genomic positions") +
     geom_vline(xintercept = 0, linetype = "dashed", size = 0.25) +
-    scale_y_continuous(name = "Polymorphisms")
+    scale_y_continuous(name = "Tajima's D")
 
   }
   if(y=="SNPS"){
