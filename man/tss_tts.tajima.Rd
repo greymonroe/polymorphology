@@ -7,10 +7,9 @@
 tss_tts.tajima(
   gff,
   tajima,
-  type = "both",
   chrs = "all",
   num = "all",
-  loc = "tss",
+  loc = "both",
   feature = "gene"
 )
 }

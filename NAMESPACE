@@ -2,6 +2,7 @@
 
 export(getTajimasD)
 export(tss_tts.feature)
+export(tss_tts.maf)
 export(tss_tts.mappability)
 export(tss_tts.tajima)
 export(tss_tts.tajima.plot)

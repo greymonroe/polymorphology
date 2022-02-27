@@ -4,7 +4,7 @@
 \alias{tss_tts.tajima.plot}
 \title{plot relative position of tajimas D in relation to gene bodies}
 \usage{
-tss_tts.tajima.plot(tajima, window = 300, color = "green4")
+tss_tts.tajima.plot(tajima, window = 10, color = "green4", y = "D")
 }
 \arguments{
 \item{tajima}{object creatd by tss_tts.tajima() with columns pos, D, and loc}
