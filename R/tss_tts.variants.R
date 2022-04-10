@@ -12,6 +12,7 @@
 #' @import data.table
 #' @import vcfR
 #' @export
+
 tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature="gene"){
 
   if (is.character(gff)){
@@ -42,6 +43,9 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     } else {
       out<-c(-3000:3000)[((as.numeric(x[4])-3000):(as.numeric(x[4])+3000) %in% var_split[[x[1]]])]
     }
+    if(length(out)==0){
+      return(NULL)
+    }
     dt<-data.table(pos=out, loc="TSS", gene=x[9])
     return(dt)
   }
@@ -54,7 +58,11 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     } else {
       out<-c(-3000:3000)[((as.numeric(x[5])-3000):(as.numeric(x[5])+3000) %in% var_split[[x[1]]])]
     }
-    return(data.table(pos=out, loc="TTS", gene=x[9]))
+    if(length(out)==0){
+      return(NULL)
+    }
+    dt<-data.table(pos=out, loc="TTS", gene=x[9])
+    return(dt)
   }
   ))
   # merge into single data.table of tss and tts
