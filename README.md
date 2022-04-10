@@ -1,5 +1,9 @@
 # polymorphology
 
-For research analyzing how rates of poylmorphism vary between different regions of the genome. For example, how rates of polymoprhim relate to transcription start and termination sites and coding regions. Contains wrapper functions to simplify analyses of population genetic statistics like Tajima's D within and around features as well. Part of a larger project investigating the role of mutation bias in shaping the genomic "morphology" of genetic polymorphisms.
+Functions used in Monroe et al 2022 (https://www.nature.com/articles/s41586-021-04269-6)
 
-*Testing first pull request by Harrison Yu 4/20/21 on branch* 
+Can be installed as R package with:
+devtools::install_github("greymonroe/polymorphology")
+
+
+
