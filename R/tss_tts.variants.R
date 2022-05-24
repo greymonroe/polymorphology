@@ -38,10 +38,10 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
 
   # extract positions of variants relative to transcription start sites (tss)
   tss<-rbindlist(apply(genes, 1, function(x){
-    if(x[7]=="-"){
-      out<- c(-3000:3000)[rev((as.numeric(x[5])-3000):(as.numeric(x[5])+3000) %in% var_split[[x[1]]])]
+    if(x["direction"]=="-"){
+      out<- c(-3000:3000)[rev((as.numeric(x["stop"])-3000):(as.numeric(x["stop"])+3000) %in% var_split[[x["chr"]]])]
     } else {
-      out<-c(-3000:3000)[((as.numeric(x[4])-3000):(as.numeric(x[4])+3000) %in% var_split[[x[1]]])]
+      out<-c(-3000:3000)[((as.numeric(x["start"])-3000):(as.numeric(x["start"])+3000) %in% var_split[[x["chr"]]])]
     }
     if(length(out)==0){
       return(NULL)
@@ -53,10 +53,10 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
 
   # extract positions of variants relative to transcription termination sites (tts)
   tts<-rbindlist(apply(genes, 1, function(x){
-    if(x[7]=="-"){
-      out<- c(-3000:3000)[rev((as.numeric(x[4])-3000):(as.numeric(x[4])+3000) %in% var_split[[x[1]]])]
+    if(x["direction"]=="-"){
+      out<- c(-3000:3000)[rev((as.numeric(x["start"])-3000):(as.numeric(x["start"])+3000) %in% var_split[[x["chr"]]])]
     } else {
-      out<-c(-3000:3000)[((as.numeric(x[5])-3000):(as.numeric(x[5])+3000) %in% var_split[[x[1]]])]
+      out<-c(-3000:3000)[((as.numeric(x["stop"])-3000):(as.numeric(x["stop"])+3000) %in% var_split[[x["chr"]]])]
     }
     if(length(out)==0){
       return(NULL)

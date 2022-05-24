@@ -9,7 +9,7 @@ Null_ns_s(mutations, composition)
 \arguments{
 \item{mutations}{file with columns 'ref' 'alt' and 'N' counts for each mutation}
 
-\item{composition}{file where each row is coding regions and columns 2,4,6,8, have counts of A, T, C, G}
+\item{composition}{file where each row is coding regions and columns 1,2,3,4, have counts of A, T, C, G}
 }
 \value{
 a list non synonymous/synonymous and stop/synonymous ratios
