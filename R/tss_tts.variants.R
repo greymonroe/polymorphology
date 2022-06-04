@@ -2,7 +2,7 @@
 # input:
 
 #' extract relative position of polymorphisms in relation to gene bodies
-#' @param gff directory and file name of reference gff OR data.table object of gff data
+#' @param gff directory and file name of reference gff OR data.table object of gff data with c("chr","source","type","start","stop","V1","direction","V2","info") columns
 #' @param vcf directory and file name vcf data OR data.table object of variant data (data.table with CHROM, POS, REF, and ALT columns)
 #' @param type "snp", "indel", or "both", default is "both"
 #' @param chrs selection specific chromosomes, default is "all"
@@ -19,7 +19,6 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     gff<-fread(gff)
     colnames(gff)<-c("chr","source","type","start","stop","V1","direction","V2","info")
   }
-
 
   if (is.character(vcf)){
     vcf<-read.vcfR(vcf)
@@ -46,7 +45,7 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     if(length(out)==0){
       return(NULL)
     }
-    dt<-data.table(pos=out, loc="TSS", gene=x[9])
+    dt<-data.table(pos=out, loc="TSS", gene=x["info"])
     return(dt)
   }
   ))
@@ -61,7 +60,7 @@ tss_tts.variants<-function(gff, vcf, type="both", chrs="all", num="all", feature
     if(length(out)==0){
       return(NULL)
     }
-    dt<-data.table(pos=out, loc="TTS", gene=x[9])
+    dt<-data.table(pos=out, loc="TTS", gene=x["info"])
     return(dt)
   }
   ))
