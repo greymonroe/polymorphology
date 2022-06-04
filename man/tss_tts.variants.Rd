@@ -14,7 +14,7 @@ tss_tts.variants(
 )
 }
 \arguments{
-\item{gff}{directory and file name of reference gff OR data.table object of gff data}
+\item{gff}{directory and file name of reference gff OR data.table object of gff data with c("chr","source","type","start","stop","V1","direction","V2","info") columns}
 
 \item{vcf}{directory and file name vcf data OR data.table object of variant data (data.table with CHROM, POS, REF, and ALT columns)}
 
