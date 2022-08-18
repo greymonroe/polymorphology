@@ -1,10 +1,11 @@
-library(seqinr)
-library(openxlsx)
-library(data.table)
-#library(polymorphology) #redundant
-library(cowplot)
+#' @export
+
 
 make_feature_windows<-function(encode_data, deciles=10, gene=F){
+
+  library(seqinr)
+  library(openxlsx)
+  library(data.table)
 
   windows<-rbindlist(apply(encode_data, 1, function(x) {
 
@@ -59,7 +60,7 @@ make_gene_windows<-function(data, window=150){
   deciles<-3000/window
   windows<-rbindlist(apply(data, 1, function(x) {
 
-    chr=x["chr"]
+    chr=x["CHROM"]
     body_starts=seq(as.numeric(x["start"]), as.numeric(x["stop"]), by=3000/deciles);body_starts<-body_starts[-length(body_starts)]
     body_stops<-seq(as.numeric(x["start"]), as.numeric(x["stop"]),  by=3000/deciles)[-1]
     upstream_starts<-seq(as.numeric(x["start"])-3000, as.numeric(x["start"]), length.out=deciles+1)[-(deciles+1)]
@@ -167,8 +168,6 @@ plot_peaks<-function(encode_data, ggtitle, xtitle, deciles, var_data, gene=F, ma
 
   windows<-make_feature_windows(encode_data =  encode_data, deciles, gene=gene)
   windows_vars<-foverlaps(windows, var_data,type="any")
-  #windows_vars[ID==1 & region=="upstream"]
-  windows_vars[ID==1 & region=="gene body"]
   windows_means<-windows_vars[,.(mut=sum(!is.na(start)), N=.N, length=mean(length, na.rm=T)),by=.(pos, region, i.ID)]
   windows_means<-windows_means[,.(pct=sum(mut)/sum(length), mut=sum(mut), length=sum(length)), by=.(pos, region)]
   if(marky==T){windows_means$pct<-windows_means$mut}
@@ -253,8 +252,8 @@ chip_overlaps<-function(bedfile, featureobject){
 
 peaks_randomized<-function(featureobject){
   rand<-rbindlist(apply(rbindlist(list(featureobject,featureobject,featureobject,featureobject,featureobject,featureobject,featureobject,featureobject,featureobject,featureobject)), 1, function(x){
-    chr<-x["chr"]
-    start<-sample(1:length(genome[[chr]]), 1)
+    chr<-x["CHROM"]
+    start<-sample(1:max(featureobject[CHROM==chr]$stop), 1)
     stop<-start+as.numeric(x["length"])
     return(data.table(chr=chr, start=start, stop=stop))
   }))
@@ -303,3 +302,60 @@ neighbor<-function(vars,fasta){
     return(data.table(alt, downstream, upstream,ref_genome, ref_vcf, neighbor_same))
   }))
 }
+
+pctile<-function(raw_object, types, variable, char=F, x_name, title){
+  if(char){
+    tmp<-raw_object[type%in%types,c("sumraw","sumlength",variable), with=F]
+    tmp$vardata<-tmp[,variable,with=F]
+    pcts<-tmp[, .(raw=sum(sumraw), length=sum(sumlength), N=.N), by=.(cut=vardata)]
+    pcts$pct<-pcts$raw/pcts$length
+    pcts$variable<-variable
+    chi<-chisq.test(pcts[,2:3])
+    plot<-ggplot(pcts, aes(x=cut, y=pct))+
+      geom_bar(stat="identity", fill="dodgerblue4", col="black", width=0.5)+
+      scale_y_continuous(name="Mutations/bp")+
+      theme_classic(base_size = 6)+
+      theme(axis.text.x = element_text(angle=45, hjust=1))+
+      scale_x_discrete(name=x_name)+
+      ggtitle(title, subtitle=paste0("X-squared=",round(chi$statistic, digits = 1),"\n",ifelse(chi$p.value<0.05,"p<0.05*","n.s.")))
+
+  } else{
+    tmp<-raw_object[type%in%types,c("sumraw","sumlength",variable), with=F]
+    tmp$vardata<-tmp[,variable,with=F]
+    tmp<-tmp[is.finite(vardata)]
+    pcts<-tmp[, .(raw=sum(sumraw), length=sum(sumlength), N=.N), by=.(cut=Hmisc::cut2(vardata, g = 2))]
+    pcts$pct<-pcts$raw/pcts$length
+    pcts$variable<-variable
+  }
+  bootpop<-rep(unlist(apply(pcts, 1, function(x){
+    rep(x[1], times=as.numeric(x[2]))
+  })), times=1000)
+
+  pct_boot<-rbindlist(lapply(1:200, function(i){
+    cut<-sample(bootpop, size=sum(pcts$raw))
+    out<-data.table(table(cut))
+    out<-merge(out,pcts, by="cut")
+    out$pct<-out$N.x/out$length
+    return(out)
+  }))
+
+  CI<-rbindlist(lapply(unique(pcts$cut), function(s){
+    lvl<-pct_boot[cut==s][order(pct)][-c(1:5, 195:200)]
+    out<-data.table(cut=s, min=min(lvl$pct), max=max(lvl$pct))
+  }))
+  pcts<-merge(pcts, CI)
+
+  chi<-chisq.test(pcts[,2:3])
+  plot<-ggplot(pcts, aes(x=cut, y=pct))+
+    geom_point(col="dodgerblue4")+
+    geom_errorbar(aes(ymin=min, ymax=max), width=0)+
+    scale_y_continuous(name="Mutations/bp")+
+    theme_classic(base_size = 6)+
+    theme(axis.text.x = element_text(angle=45, hjust=1))+
+    scale_x_discrete(name=x_name)+
+    ggtitle(title, subtitle=paste0("X-squared=",round(chi$statistic, digits = 1),"\n",ifelse(chi$p.value<0.05,"p<0.05*","n.s.")))
+
+  return(list(pcts, chi, plot))
+}
+
+
