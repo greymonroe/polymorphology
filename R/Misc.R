@@ -305,9 +305,10 @@ neighbor<-function(vars,fasta){
 
 pctile<-function(raw_object, types, variable, char=F, x_name, title){
   if(char){
-    tmp<-raw_object[type%in%types,c("sumraw","sumlength",variable), with=F]
+    tmp<-raw_object[type%in%types,c("mutations","sumlength",variable), with=F]
     tmp$vardata<-tmp[,variable,with=F]
-    pcts<-tmp[, .(raw=sum(sumraw), length=sum(sumlength), N=.N), by=.(cut=vardata)]
+    tmp<-tmp[!is.na(vardata) & vardata!=""]
+    pcts<-tmp[, .(raw=sum(mutations), length=sum(sumlength), N=.N), by=.(cut=vardata)]
     pcts$pct<-pcts$raw/pcts$length
     pcts$variable<-variable
     chi<-chisq.test(pcts[,2:3])
@@ -320,10 +321,10 @@ pctile<-function(raw_object, types, variable, char=F, x_name, title){
       ggtitle(title, subtitle=paste0("X-squared=",round(chi$statistic, digits = 1),"\n",ifelse(chi$p.value<0.05,"p<0.05*","n.s.")))
 
   } else{
-    tmp<-raw_object[type%in%types,c("sumraw","sumlength",variable), with=F]
+    tmp<-raw_object[type%in%types,c("mutations","sumlength",variable), with=F]
     tmp$vardata<-tmp[,variable,with=F]
     tmp<-tmp[is.finite(vardata)]
-    pcts<-tmp[, .(raw=sum(sumraw), length=sum(sumlength), N=.N), by=.(cut=Hmisc::cut2(vardata, g = 2))]
+    pcts<-tmp[, .(raw=sum(mutations), length=sum(sumlength), N=.N), by=.(cut=Hmisc::cut2(vardata, g = 2))]
     pcts$pct<-pcts$raw/pcts$length
     pcts$variable<-variable
   }
@@ -356,6 +357,25 @@ pctile<-function(raw_object, types, variable, char=F, x_name, title){
     ggtitle(title, subtitle=paste0("X-squared=",round(chi$statistic, digits = 1),"\n",ifelse(chi$p.value<0.05,"p<0.05*","n.s.")))
 
   return(list(pcts, chi, plot))
+}
+
+mutations_in_features<-function(features, mutations){
+  if(length(setdiff(c("CHROM", "START","STOP"), colnames(features)))>0){
+    stop("features object needs to hace CHROM START and STOP columns")
+  }
+  if(length(setdiff(c("CHROM", "POSITION"), colnames(mutations)))>0){
+    stop("mutations object needs to hace CHROM and POSITION columns")
+  }
+
+  mutations$START<-mutations$POSITION
+  mutations$STOP<-mutations$POSITION
+  features$feature_ID<-1:nrow(features)
+  setkey(features, CHROM, START, STOP)
+  setkey(mutations, CHROM, START, STOP)
+
+  overlaps<-foverlaps(features, mutations)
+  muts<-overlaps[,.(muts=sum(!is.na(POSITION))), by=.(feature_ID)]
+  return(muts$muts)
 }
 
 
