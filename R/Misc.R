@@ -378,4 +378,25 @@ mutations_in_features<-function(features, mutations){
   return(muts$muts)
 }
 
+features_overlap_mutation<-function(features, mutations){
+  if(length(setdiff(c("CHROM", "START","STOP"), colnames(features)))>0){
+    stop("features object needs to hace CHROM START and STOP columns")
+  }
+  if(length(setdiff(c("CHROM", "POSITION"), colnames(mutations)))>0){
+    stop("mutations object needs to hace CHROM and POSITION columns")
+  }
+
+  mutations$START<-mutations$POSITION
+  mutations$STOP<-mutations$POSITION
+  mutations$mutation_ID<-1:nrow(mutations)
+
+  features$feature_ID<-1:nrow(features)
+  setkey(features, CHROM, START, STOP)
+  setkey(mutations, CHROM, START, STOP)
+
+  overlaps<-foverlaps(mutations, features)
+  muts<-overlaps[,.(overlaps=sum(!is.na(POSITION))>0), by=.(mutation_ID)]
+  return(muts$overlaps)
+}
+
 
