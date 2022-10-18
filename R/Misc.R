@@ -308,7 +308,7 @@ pctile<-function(raw_object, types, variable, char=F, x_name, title){
     tmp<-raw_object[type%in%types,c("mutations","sumlength",variable), with=F]
     tmp$vardata<-tmp[,variable,with=F]
     tmp<-tmp[!is.na(vardata) & vardata!=""]
-    pcts<-tmp[, .(raw=sum(mutations), length=sum(sumlength), N=.N), by=.(cut=vardata)]
+    pcts<-unique(tmp)[, .(raw=sum(mutations), length=sum(sumlength), N=.N), by=.(cut=vardata)]
     pcts$pct<-pcts$raw/pcts$length
     pcts$variable<-variable
     chi<-chisq.test(pcts[,2:3])
@@ -395,7 +395,7 @@ features_overlap_mutation<-function(features, mutations){
   setkey(mutations, CHROM, START, STOP)
 
   overlaps<-foverlaps(mutations, features)
-  muts<-overlaps[,.(overlaps=sum(!is.na(POSITION))>0), by=.(mutation_ID)]
+  muts<-overlaps[,.(overlaps=sum(!is.na(feature_ID))>0), by=.(mutation_ID)]
   return(muts$overlaps)
 }
 
