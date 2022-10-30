@@ -4,7 +4,7 @@
 \alias{contexts_plot}
 \title{plot trinucleotide context}
 \usage{
-contexts_plot(contexts)
+contexts_plot(contexts, full = T)
 }
 \arguments{
 \item{contexts}{results from contexts()}
