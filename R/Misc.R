@@ -308,7 +308,7 @@ pctile<-function(raw_object, types, variable, char=F, x_name, title){
     tmp<-raw_object[type%in%types,c("mutations","sumlength",variable), with=F]
     tmp$vardata<-tmp[,variable,with=F]
     tmp<-tmp[!is.na(vardata) & vardata!=""]
-    pcts<-unique(tmp)[, .(raw=sum(mutations), length=sum(sumlength), N=.N), by=.(cut=vardata)]
+    pcts<-(tmp)[, .(raw=sum(mutations), length=sum(sumlength), N=.N), by=.(cut=vardata)]
     pcts$pct<-pcts$raw/pcts$length
     pcts$variable<-variable
     chi<-chisq.test(pcts[,2:3])
@@ -380,6 +380,17 @@ mutations_in_features<-function(features, mutations){
     mutations$POSITION<-mutations$POS
 
   }
+
+
+  if("start" %in% colnames(features)){
+    features$START<-features$start
+    features$STOP<-features$stop
+  }
+
+  if("chr" %in% colnames(features)){
+    features$CHROM<-features$chr
+  }
+
   features$CHROM<-as.character(features$CHROM)
   mutations$CHROM<-as.character(mutations$CHROM)
 
