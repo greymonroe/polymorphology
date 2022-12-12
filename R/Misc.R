@@ -360,15 +360,29 @@ pctile<-function(raw_object, types, variable, char=F, x_name, title){
 }
 
 mutations_in_features<-function(features, mutations){
-  if(length(setdiff(c("CHROM", "START","STOP"), colnames(features)))>0){
-    stop("features object needs to hace CHROM START and STOP columns")
-  }
-  if(length(setdiff(c("CHROM", "POSITION"), colnames(mutations)))>0){
-    stop("mutations object needs to hace CHROM and POSITION columns")
-  }
+  # if(length(setdiff(c("CHROM", "START","STOP"), colnames(features)))>0){
+  #   stop("features object needs to hace CHROM START and STOP columns")
+  # }
+  # if(length(setdiff(c("CHROM", "POSITION"), colnames(mutations)))>0){
+  #   stop("mutations object needs to hace CHROM and POSITION columns")
+  # }
 
-  mutations$START<-mutations$POSITION
-  mutations$STOP<-mutations$POSITION
+  features$CHROM<-features$chr
+  features$STOP<-features$stop
+  features$START<-features$start
+  if("POSITION" %in% colnames(mutations)){
+    mutations$START<-mutations$POSITION
+    mutations$STOP<-mutations$POSITION
+  }
+  if("POS" %in% colnames(mutations)){
+    mutations$START<-mutations$POS
+    mutations$STOP<-mutations$POS
+    mutations$POSITION<-mutations$POS
+
+  }
+  features$CHROM<-as.character(features$CHROM)
+  mutations$CHROM<-as.character(mutations$CHROM)
+
   features$feature_ID<-1:nrow(features)
   setkey(features, CHROM, START, STOP)
   setkey(mutations, CHROM, START, STOP)
@@ -388,14 +402,22 @@ features_overlap_mutation<-function(features, mutations){
 
   mutations$START<-mutations$POSITION
   mutations$STOP<-mutations$POSITION
-  mutations$mutation_ID<-1:nrow(mutations)
+
+  if("start" %in% colnames(features)){
+    features$START<-features$start
+    features$STOP<-features$stop
+  }
+
+  features$CHROM<-as.character(features$CHROM)
+  mutations$CHROM<-as.character(mutations$CHROM)
 
   features$feature_ID<-1:nrow(features)
   setkey(features, CHROM, START, STOP)
   setkey(mutations, CHROM, START, STOP)
+  mutations$mutation_ID<-1:nrow(mutations)
 
   overlaps<-foverlaps(mutations, features)
-  muts<-overlaps[,.(overlaps=sum(!is.na(feature_ID))>0), by=.(mutation_ID)]
+  muts<-overlaps[,.(overlaps=sum(!is.na(feature_ID))>0), by=.(mutation_ID)][order(mutation_ID)]
   return(muts$overlaps)
 }
 
