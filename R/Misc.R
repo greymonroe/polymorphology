@@ -56,6 +56,50 @@ read_encode<-function(file){
   return(encode_data)
 }
 
+dimerfrequency<-function(regions, genome){
+
+  if(!"chr" %in% colnames(regions)){
+    stop("'chr' column not found in region object")
+  }
+  if(!"start" %in% colnames(regions)){
+    stop("'start' column not found in region object")
+  }
+  if(!"stop" %in% colnames(regions)){
+    stop("'stop' column not found in region object")
+  }
+
+  out<-rbindlist(apply(regions, 1, function(x){
+
+    chrom<-x["chr"]
+
+    if(!chrom %in% names(genome)){
+      stop(paste(chrom,"from region object not found in names of genome object"))
+    }
+
+    start<-as.numeric(x["start"])
+    if(start<0){start<-1}
+    stop<-as.numeric(x["stop"])
+    if(stop>length(genome[[chrom]])){stop<-length(genome[[chrom]])}
+    seq<-toupper(paste0(unlist(genome[[chrom]][start:stop]), collapse=""))
+
+    motifs<-expand.grid(c("A","T","C","G"), c("A","T","C","G"))
+    motifs<-paste0(motifs$Var1, motifs$Var2)
+    motif<-"YY"
+    motif<-motifs[1]
+    allhits<-rbindlist(lapply(motifs, function(motif){
+      hits<-str_locate_all(seq, motif)
+      hits<-data.table(hits[[1]])
+      return(data.table(motif, count=nrow(hits)))
+    }))
+    counts<-prop.table(allhits$count)
+    motif_props<-data.table(t(matrix(counts)))
+    colnames(motif_props)<-motifs
+    return(motif_props)
+  }))
+
+  return(out)
+}
+
 make_gene_windows<-function(data, window=150){
   deciles<-3000/window
   windows<-rbindlist(apply(data, 1, function(x) {
@@ -281,6 +325,33 @@ homopolymer_read<-function(seq, size){
   homopolymers<-runs[length>=size]
 }
 
+homopolymer_var_annotate<-function(vars, homopolymers, size, dist){
+
+  homopolymers<-rbindlist(lapply(1:length(homopolymers), function(x) {
+    out<-homopolymers[[x]][length>=size]
+    out$CHROM<-names(homopolymers)[x]
+    return(out)
+  }))
+
+  homopolymers$startminus<-homopolymers$start-dist
+  homopolymers$endplus<-homopolymers$end+dist
+  setkey(homopolymers, CHROM, startminus, endplus)
+  setkey(vars, chr, start, stop)
+  overlap<-foverlaps(vars, homopolymers)
+  overlap_sum<-overlap[ALT==var, .(homopolymer_neighbor=sum(!is.na(var))>0),by=unique]
+  vars$homopolymer_neighbor=overlap_sum$homopolymer_neighbor[match(vars$unique, overlap_sum$unique)]
+  return(vars$homopolymer_neighbor)
+}
+
+long_context<-function(vars,dist){
+  apply(vars, 1, function(x){
+  chr<-x["CHROM"]
+  pos<-as.numeric(x["POS"])
+  ref<-x["REF"]
+  alt<-x["ALT"]
+  long_context<-toupper(paste0(genome[[chr]][(pos-dist):(pos+dist)], collapse=""))
+})
+}
 
 make_homopolymer<-function(genome, size){
   seqs<-lapply(genome, function(x) unlist(x[1:length(x)]))
