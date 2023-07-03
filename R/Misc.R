@@ -102,6 +102,7 @@ dimerfrequency<-function(regions, genome){
 
 make_gene_windows<-function(data, window=150){
   deciles<-3000/window
+  data$ID<-1:nrow(data)
   windows<-rbindlist(apply(data, 1, function(x) {
 
     chr=x["CHROM"]
