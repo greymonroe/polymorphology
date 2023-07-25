@@ -425,10 +425,9 @@ pctile<-function(raw_object, types, variable, char=F, x_name, title){
     scale_y_continuous(name="Mutations/bp")+
     theme_classic(base_size = 6)+
     theme(axis.text.x = element_text(angle=45, hjust=1))+
-    scale_x_discrete(name=x_name)+
-    ggtitle(title, subtitle=paste0("X-squared=",round(chi$statistic, digits = 1),"\n",ifelse(chi$p.value<0.05,"p<0.05*","n.s.")))
+    scale_x_discrete(name=x_name)
 
-  return(list(pcts, chi, plot))
+  return(plot)
 }
 
 mutations_in_features<-function(features, mutations){
