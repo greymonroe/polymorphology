@@ -31,7 +31,7 @@ return(list(context_table, plot))
 } else {
   context_table<-data.table(table(context=paste(substr(contexts, 2,2),substr(contexts, 6,6), sep=">")))
   plot<-ggplot(context_table, aes(x=context, y=(N), fill=context))+
-    geom_bar(stat="identity", width=0.5)+
+    geom_bar(stat="identity", width=0.5, col="black")+
     theme_classic(base_size = 6)+
     scale_x_discrete(name="Mutation")+
     theme(axis.text.x = element_text(angle=90, vjust=0.5, hjust=1), legend.key.size = unit(x = 0.3, units = "line"))+
