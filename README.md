@@ -1,6 +1,6 @@
 # polymorphology
 
-#update:
+# update:
 functions with better documentation now at (https://github.com/greymonroe/polymorphology2)
 
 Functions used in 
